@@ -1,0 +1,10 @@
+[config]
+
+name="UnityAdsGodot"
+binary_type="local"
+binary="unityadsgodot-release.aar"
+
+[dependencies]
+
+local=[]
+remotr=["com.unity3d.ads:unity-ads:4.7.0"]
