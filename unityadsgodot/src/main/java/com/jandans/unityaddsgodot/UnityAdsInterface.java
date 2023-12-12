@@ -272,7 +272,7 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
         }
         else
         {
-            Log.i(TAG, "Adds not ready");
+            Log.i(TAG, "Ads not ready");
             return false;
         }
     }
