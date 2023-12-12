@@ -53,10 +53,10 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
     private SignalInfo UnityAdsLoadError = new SignalInfo("UnityAdsLoadError", String.class,String.class);
     private SignalInfo UnityAdsShowError = new SignalInfo("UnityAdsShowError", String.class,String.class);
     private SignalInfo UnityBannerLoaded = new SignalInfo("UnityBannerLoaded",String.class);
-    private SignalInfo UnityBannerUnloaded = new SignalInfo("UnityBannerUnloaded",String.class);
-    private SignalInfo UnityBannerShow = new SignalInfo("UnityBannerShow",String.class);
+    // private SignalInfo UnityBannerUnloaded = new SignalInfo("UnityBannerUnloaded",String.class);
+    // private SignalInfo UnityBannerShow = new SignalInfo("UnityBannerShow",String.class);
     private SignalInfo UnityBannerClick = new SignalInfo("UnityBannerClick",String.class);
-    private SignalInfo UnityBannerHide = new SignalInfo("UnityBannerHide",String.class);
+    // private SignalInfo UnityBannerHide = new SignalInfo("UnityBannerHide",String.class);
     private SignalInfo UnityBannerError = new SignalInfo("UnityBannerError", String.class,String.class);
 
     private IUnityAdsLoadListener loadListener = new IUnityAdsLoadListener() {
@@ -202,10 +202,11 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
                 add(UnityAdsLoadError);
                 add(UnityAdsShowError);
                 add(UnityBannerLoaded);
-                add(UnityBannerUnloaded);
-                add(UnityBannerShow);
-                add(UnityBannerHide);
+                // add(UnityBannerUnloaded);
+                // add(UnityBannerShow);
+                // add(UnityBannerHide);
                 add(UnityBannerError);
+                add(UnityBannerClick);
             }
         };
     }
