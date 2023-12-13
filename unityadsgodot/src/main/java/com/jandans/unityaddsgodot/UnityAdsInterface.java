@@ -351,8 +351,8 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
                     topBanner = new BannerView(getActivity(), placementId, new UnityBannerSize(320,50));
                     topBanner.setListener(bannerListener);
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-                    params.addRule(RelativeLayout.ALIGN_TOP,RelativeLayout.TRUE);
-                    topBannerView = new RelativeLayout((Context) getActivity(), (AttributeSet) params);
+                    topBannerView = new RelativeLayout((Context) getActivity());
+                    topBannerView.setLayoutParams(params);
 
                     topBanner.load();
 
@@ -363,8 +363,8 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
                     bottomBanner = new BannerView(getActivity(), placementId, new UnityBannerSize(320,50));
                     bottomBanner.setListener(bannerListener);
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-                    params.addRule(RelativeLayout.ALIGN_BOTTOM,RelativeLayout.TRUE);
-                    bottomBannerView = new RelativeLayout((Context) getActivity(), (AttributeSet) params);
+                    bottomBannerView = new RelativeLayout((Context) getActivity());
+                    bottomBannerView.setLayoutParams(params);
 
                     bottomBanner.load();
                 }
