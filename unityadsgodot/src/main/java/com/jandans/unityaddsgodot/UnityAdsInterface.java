@@ -335,7 +335,7 @@ public class UnityAdsInterface extends GodotPlugin  {
                     if(bannerView==null)
                     {
                         loadBanner(placementID,top);
-                        
+
                     }
                     bannerView.addView(banner);
 
