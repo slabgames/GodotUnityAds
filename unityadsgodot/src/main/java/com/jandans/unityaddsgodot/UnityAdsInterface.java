@@ -3,7 +3,9 @@ package com.jandans.unityaddsgodot;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.LayoutDirection;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -15,6 +17,7 @@ import com.unity3d.ads.IUnityAdsInitializationListener;
 import com.unity3d.ads.IUnityAdsLoadListener;
 import com.unity3d.ads.IUnityAdsShowListener;
 import com.unity3d.ads.UnityAds;
+import com.unity3d.ads.UnityAdsLoadOptions;
 import com.unity3d.ads.UnityAdsShowOptions;
 import com.unity3d.services.banners.BannerErrorInfo;
 import com.unity3d.services.banners.BannerView;
@@ -32,17 +35,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
-public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializationListener {
+public class UnityAdsInterface extends GodotPlugin  {
 
     private final String TAG = "UnityAdsInterface";
     // This banner view object will be placed at the top of the screen:
-    BannerView topBanner;
+    BannerView banner;
     // This banner view object will be placed at the bottom of the screen:
-    BannerView bottomBanner;
+//    BannerView bottomBanner;
     // View objects to display banners:
-    RelativeLayout topBannerView;
-    RelativeLayout bottomBannerView;
+    RelativeLayout bannerView;
+//    RelativeLayout bottomBannerView;
     private SignalInfo UnityAdsInitCompleted = new SignalInfo("UnityAdsInitCompleted");
     private SignalInfo UnityAdsInitFailed = new SignalInfo("UnityAdsInitFailed",String.class);
     private SignalInfo UnityAdsReady = new SignalInfo("UnityAdsReady",String.class);
@@ -72,6 +76,21 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
         public void onUnityAdsFailedToLoad(String placementId, UnityAds.UnityAdsLoadError error, String message) {
             Log.e("UnityAdsExample", "Unity Ads failed to load ad for " + placementId + " with error: [" + error + "] " + message);
             emitSignal(UnityAdsLoadError.getName(),placementId,message);
+        }
+    };
+
+    private IUnityAdsInitializationListener initListener = new IUnityAdsInitializationListener() {
+        @Override
+        public void onInitializationComplete() {
+
+            emitSignal(UnityAdsInitCompleted.getName());
+            Log.v(TAG, "Unity Ads initialization completed");
+        }
+
+        @Override
+        public void onInitializationFailed(UnityAds.UnityAdsInitializationError error, String message) {
+            emitSignal(UnityAdsInitFailed.getName(),message);
+            Log.e(TAG, "Unity Ads initialization failed with error: [" + error + "] " + message);
         }
     };
 
@@ -216,70 +235,93 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
     }
 
     @UsedByGodot
-    public void initialise(String appId, boolean testMode)
+    public void initialise(final String appId, final boolean testMode)
     {
-        try
-        {
-            UnityAds.initialize(getActivity(), appId, testMode,this);
-        }
-        catch (Exception ex)
-        {
-            Log.e(TAG, ex.getMessage());
-        }
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try
+                {
+                    UnityAds.initialize(getActivity(), appId, testMode,initListener);
+                }
+                catch (Exception ex)
+                {
+                    Log.e(TAG, ex.getMessage());
+                }
+            }
+        });
+
     }
 
 
     @UsedByGodot
-    public void loadAd(String placementId)
+    public void loadAd(final String placementId)
     {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                UnityAds.load(placementId,loadListener);
+            }
+        });
 
-        UnityAds.load(placementId,loadListener);
     }
 
     @UsedByGodot
-    public boolean showInter(String placementId)
+    public void showInter(final String placementId)
     {
-        if (UnityAds.isInitialized())
-        {
-            try
-            {
-                UnityAds.show(getActivity(), placementId,interListener);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (UnityAds.isInitialized())
+                {
+                    try
+                    {
+                        UnityAds.show(getActivity(), placementId,interListener);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.e(TAG, ex.getMessage());
+//                return false;
+                    }
+//            return true;
+                }
+                else
+                {
+                    Log.i(TAG, "Adds not ready");
+//            return false;
+                }
             }
-            catch (Exception ex)
-            {
-                Log.e(TAG, ex.getMessage());
-                return false;
-            }
-            return true;
-        }
-        else
-        {
-            Log.i(TAG, "Adds not ready");
-            return false;
-        }
+        });
+
     }
 
     @UsedByGodot
-    public boolean showRewarded(String placementId)
+    public void showRewarded(final String placementId)
     {
-        if (UnityAds.isInitialized())
-        {
-            try
-            {
-                UnityAds.show(getActivity(), placementId,rewardedListener);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (UnityAds.isInitialized())
+                {
+                    try
+                    {
+                        UnityAds.show(getActivity(), placementId,rewardedListener);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.e(TAG, ex.getMessage());
+//                return false;
+                    }
+//            return true;
+                }
+                else
+                {
+                    Log.i(TAG, "Ads not ready");
+//            return false;
+                }
             }
-            catch (Exception ex)
-            {
-                Log.e(TAG, ex.getMessage());
-                return false;
-            }
-            return true;
-        }
-        else
-        {
-            Log.i(TAG, "Ads not ready");
-            return false;
-        }
+        });
+
     }
 
     @UsedByGodot
@@ -290,19 +332,11 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
             public void run() {
                 try
                 {
-                    if (top)
+                    if(bannerView==null)
                     {
-                        if(topBannerView!=null)
-                            topBannerView.setVisibility(View.VISIBLE);
-                        if(bottomBannerView != null)
-                            bottomBannerView.setVisibility(View.INVISIBLE);
-                    }
-                    else
-                    {
-                        if(bottomBannerView!=null)
-                            bottomBannerView.setVisibility(View.VISIBLE);
-                        if(topBannerView != null)
-                            topBannerView.setVisibility(View.INVISIBLE);
+                        loadBanner(placementID,top);
+
+                        bannerView.addView(banner);
                     }
 
                 }
@@ -321,24 +355,16 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(topBanner!=null)
+                    if(bannerView!=null)
                     {
-                        topBannerView.setVisibility(View.INVISIBLE);
-
-//                        topBannerView=null;
-//                        topBanner=null;
+                        bannerView.removeAllViews();
+//                        banner=null;
+//                        bannerView=null;
 
                     }
 
-                    if(bottomBanner!=null)
-                    {
-                        bottomBannerView.setVisibility(View.INVISIBLE);
-//                        bottomBannerView=null;
-//                        bottomBanner=null;
-                    }
                 }
             });
-//            UnityBanners.destroy();
         }
         catch (Exception ex)
         {
@@ -347,33 +373,43 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
     }
 
     @UsedByGodot
-    public void loadBanner(String placementId, boolean top) {
+    public void loadBanner(String placementId, final boolean top) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                int gravity;
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
                 if (top==true)
                 {
-                    topBanner = new BannerView(getActivity(), placementId, new UnityBannerSize(320,50));
-                    topBanner.setListener(bannerListener);
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-                    topBannerView = new RelativeLayout((Context) getActivity());
-                    topBannerView.setLayoutParams(params);
-
-                    topBanner.load();
-                    topBannerView.addView(topBanner);
+                    gravity = Gravity.TOP | Gravity.CENTER;
+                    params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 
                 }
                 else
                 {
-                    bottomBanner = new BannerView(getActivity(), placementId, new UnityBannerSize(320,50));
-                    bottomBanner.setListener(bannerListener);
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-                    bottomBannerView = new RelativeLayout((Context) getActivity());
-                    bottomBannerView.setLayoutParams(params);
-
-                    bottomBanner.load();
-                    bottomBannerView.addView(bottomBanner);
+                    gravity = Gravity.BOTTOM | Gravity.CENTER;
+                    params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                 }
+                banner = new BannerView(getActivity(), placementId, new UnityBannerSize(320,50));
+                banner.setListener(bannerListener);
+
+                if(bannerView==null)
+                {
+                    RelativeLayout.LayoutParams viewParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+                    bannerView = new RelativeLayout((Context) getActivity());
+                    bannerView.setLayoutParams(params);
+                    bannerView.setGravity(gravity);
+                    getActivity().addContentView(bannerView,viewParams);
+                }
+
+
+                String mObjectId = UUID.randomUUID().toString();
+                UnityAdsLoadOptions loadOptions = new UnityAdsLoadOptions();
+//                loadOptions.setAdMarkup(markup);
+                loadOptions.setObjectId(mObjectId);
+
+                banner.load(loadOptions);
             }
         });
 
@@ -382,16 +418,5 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
     //Banner stuff goes here
 
 
-    @Override
-    public void onInitializationComplete() {
 
-        emitSignal(UnityAdsInitCompleted.getName());
-        Log.v(TAG, "Unity Ads initialization completed");
-    }
-
-    @Override
-    public void onInitializationFailed(UnityAds.UnityAdsInitializationError error, String message) {
-        emitSignal(UnityAdsInitFailed.getName(),message);
-        Log.e(TAG, "Unity Ads initialization failed with error: [" + error + "] " + message);
-    }
 }
