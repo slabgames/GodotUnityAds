@@ -232,6 +232,7 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
     @UsedByGodot
     public void loadAd(String placementId)
     {
+
         UnityAds.load(placementId,loadListener);
     }
 
@@ -292,12 +293,14 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
                     if (top)
                     {
                         topBannerView.addView(topBanner);
-                        bottomBannerView.removeAllViews();
+                        if(bottomBannerView != null)
+                            bottomBannerView.removeAllViews();
                     }
                     else
                     {
                         bottomBannerView.addView(bottomBanner);
-                        topBannerView.removeAllViews();
+                        if(topBannerView != null)
+                            topBannerView.removeAllViews();
                     }
 
                 }
