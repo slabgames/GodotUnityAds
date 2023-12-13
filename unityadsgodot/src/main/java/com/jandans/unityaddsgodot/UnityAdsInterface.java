@@ -43,6 +43,8 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
     // View objects to display banners:
     RelativeLayout topBannerView;
     RelativeLayout bottomBannerView;
+    private SignalInfo UnityAdsInitCompleted = new SignalInfo("UnityAdsInitCompleted");
+    private SignalInfo UnityAdsInitFailed = new SignalInfo("UnityAdsInitFailed",String.class);
     private SignalInfo UnityAdsReady = new SignalInfo("UnityAdsReady",String.class);
     private SignalInfo UnityAdsStart = new SignalInfo("UnityAdsStart",String.class);
     private SignalInfo UnityAdsClicked = new SignalInfo("UnityAdsClicked",String.class);
@@ -193,6 +195,8 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
     public Set<SignalInfo> getPluginSignals() {
         return new HashSet<SignalInfo>() {
             {
+                add(UnityAdsInitCompleted);
+                add(UnityAdsInitFailed);
                 add(UnityAdsReady);
                 add(UnityAdsStart);
                 add(UnityAdsFinish);
@@ -374,11 +378,14 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
 
     @Override
     public void onInitializationComplete() {
+
+        emitSignal(UnityAdsInitCompleted.getName());
         Log.v(TAG, "Unity Ads initialization completed");
     }
 
     @Override
     public void onInitializationFailed(UnityAds.UnityAdsInitializationError error, String message) {
+        emitSignal(UnityAdsInitFailed.getName(),message);
         Log.e(TAG, "Unity Ads initialization failed with error: [" + error + "] " + message);
     }
 }
