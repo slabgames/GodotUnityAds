@@ -292,14 +292,15 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
                 {
                     if (top)
                     {
-
-                        topBannerView.setVisibility(View.VISIBLE);
+                        if(topBannerView!=null)
+                            topBannerView.setVisibility(View.VISIBLE);
                         if(bottomBannerView != null)
                             bottomBannerView.setVisibility(View.INVISIBLE);
                     }
                     else
                     {
-                        bottomBannerView.setVisibility(View.VISIBLE);
+                        if(bottomBannerView!=null)
+                            bottomBannerView.setVisibility(View.VISIBLE);
                         if(topBannerView != null)
                             topBannerView.setVisibility(View.INVISIBLE);
                     }
@@ -322,7 +323,7 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
                 public void run() {
                     if(topBanner!=null)
                     {
-                        topBannerView.removeAllViews();
+                        topBannerView.setVisibility(View.INVISIBLE);
 
 //                        topBannerView=null;
 //                        topBanner=null;
@@ -331,7 +332,7 @@ public class UnityAdsInterface extends GodotPlugin implements IUnityAdsInitializ
 
                     if(bottomBanner!=null)
                     {
-                        bottomBannerView.removeAllViews();
+                        bottomBannerView.setVisibility(View.INVISIBLE);
 //                        bottomBannerView=null;
 //                        bottomBanner=null;
                     }
